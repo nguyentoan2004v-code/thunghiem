@@ -1,8 +1,14 @@
 import mysql.connector
+import os # <--- THÊM DÒNG NÀY
 
 def get_conn():
-    # Kết nối CSDL
-    return mysql.connector.connect(host="localhost", user="root", password="", database="news_db")
+    # Sử dụng biến môi trường do Render cung cấp
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST"), 
+        user=os.getenv("DB_USERNAME"), 
+        password=os.getenv("DB_PASSWORD"), 
+        database=os.getenv("DB_DATABASE")
+    )
 
 def get_or_create_source_id(conn, source_name):
     cur = conn.cursor()
