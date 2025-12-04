@@ -1,0 +1,7 @@
+# Thư viện kết nối MySQL (dùng trong db.py)
+mysql-connector-python
+
+# Các thư viện scraping (Cần thiết cho main.py và các scraper)
+requests 
+beautifulsoup4
+# Nếu có thư viện khác (ví dụ: lxml), hãy thêm vào đây
