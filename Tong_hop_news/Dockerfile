@@ -1,32 +1,33 @@
-# Bắt đầu từ image PHP + Apache
 FROM php:8.2-apache
 
-# Đặt working directory
+# Thư mục làm việc
 WORKDIR /var/www/html
 
-# Bật mod_rewrite để Laravel sử dụng đường đẹp / lịch sử url
+# Bật mod rewrite cho Laravel
 RUN a2enmod rewrite
 
-# Cài các thư viện cần thiết + công cụ hỗ trợ
+# Cài thư viện cần thiết
 RUN apt-get update && apt-get install -y \
-    zip unzip curl git \
-    libpng-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring gd
+    zip unzip curl git libpng-dev libonig-dev libxml2-dev
 
-# Copy toàn bộ mã nguồn vào container
-COPY . /var/www/html
+# Cài extension cho PHP
+RUN docker-php-ext-install pdo pdo_mysql mbstring gd
 
-# Cài Composer (nếu bạn dùng composer để quản lý thư viện)
+# Trỏ Apache về thư mục public của Laravel
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-enabled/000-default.conf
+
+# Copy đúng source Laravel (đang nằm trong thư mục con)
+COPY Tong_hop_news/NewsWeb/ /var/www/html/
+
+# Cài Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Chạy composer install để cài dependencies PHP
+# Cài package Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Đảm bảo quyền ghi cho các thư mục Laravel cần write
+# Phân quyền cho Laravel ghi cache/log
 RUN chmod -R 777 storage bootstrap/cache
 
-# Expose cổng 80 (webserver Apache)
 EXPOSE 80
 
-# Lệnh khi container khởi động
 CMD ["apache2-foreground"]
