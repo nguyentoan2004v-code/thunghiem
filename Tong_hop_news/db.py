@@ -4,10 +4,10 @@ import os # <--- THÊM DÒNG NÀY
 def get_conn():
     # Sử dụng biến môi trường do Render cung cấp
     return mysql.connector.connect(
-        host=os.getenv("DB_HOST"), 
-        user=os.getenv("DB_USERNAME"), 
-        password=os.getenv("DB_PASSWORD"), 
-        database=os.getenv("DB_DATABASE")
+        host=os.getenv("dpg-d4opu98gjchc73cquadg-a"), 
+        user=os.getenv("news_db_vb16_user"), 
+        password=os.getenv("Y5mF3pkJR3n6WDJ552VQMZOxV9O5mnav"), 
+        database=os.getenv("news_db_vb16")
     )
 
 def get_or_create_source_id(conn, source_name):
