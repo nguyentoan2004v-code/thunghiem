@@ -7,11 +7,12 @@ FROM php:8.2-fpm-alpine AS builder
 
 # 1. CÀI ĐẶT CÁC GÓI HỆ THỐNG VÀ EXTENSION CHO PHP
 # 1a. Cài đặt các gói dev cần thiết để build PHP extensions
-# Đặt tên virtual package là .build-deps để dễ dàng dọn dẹp sau này
 RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     mysql-dev \
     libzip-dev \
     zlib-dev \
+    # >>> ĐÃ THÊM GÓI NÀY <<<
+    oniguruma-dev \ 
     # Đặt tên virtual package là .build-deps để dễ dàng dọn dẹp sau này
     && docker-php-ext-install pdo pdo_mysql opcache ctype mbstring openssl bcmath zip \
     # 1b. Cài đặt các gói Runtime và ứng dụng khác (nginx, nodejs)
