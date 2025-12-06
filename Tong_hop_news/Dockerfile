@@ -6,13 +6,22 @@
 FROM php:8.2-fpm-alpine AS builder
 
 # 1. CÀI ĐẶT CÁC GÓI HỆ THỐNG VÀ EXTENSION CHO PHP
-RUN apk update && apk add --no-cache \
-    nginx \
-    nodejs \
-    npm \
+# 1a. Cài đặt các gói dev cần thiết để build PHP extensions
+# Đặt tên virtual package là .build-deps để dễ dàng dọn dẹp sau này
+RUN apk update && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    mysql-dev \
     libzip-dev \
-    # Cài đặt các extension PHP cần thiết cho Laravel và MySQL
-    && docker-php-ext-install pdo pdo_mysql opcache ctype mbstring openssl bcmath zip
+    zlib-dev \
+    # Đặt tên virtual package là .build-deps để dễ dàng dọn dẹp sau này
+    && docker-php-ext-install pdo pdo_mysql opcache ctype mbstring openssl bcmath zip \
+    # 1b. Cài đặt các gói Runtime và ứng dụng khác (nginx, nodejs)
+    && apk add --no-cache \
+        nginx \
+        nodejs \
+        npm \
+        mysql-client \
+    # 1c. Dọn dẹp các gói dev không cần thiết (để image nhỏ hơn)
+    && apk del .build-deps
 
 # 2. CÀI ĐẶT COMPOSER
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -26,8 +35,10 @@ RUN composer install --working-dir=NewsWeb --prefer-dist --no-dev --optimize-aut
 RUN npm install --prefix NewsWeb && npm run build --prefix NewsWeb
 
 # 5. CHẠY LARAVEL SETUP
+# Tạo file .env giả để commands không bị lỗi (Biến DB thực sẽ được Render cung cấp qua môi trường)
 RUN cp NewsWeb/.env.example NewsWeb/.env
 RUN php NewsWeb/artisan key:generate --force
+# Lệnh migrate sẽ kết nối với DB Host bên ngoài
 RUN php NewsWeb/artisan migrate --force
 
 # =========================================================================
