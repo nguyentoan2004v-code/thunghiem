@@ -1,14 +1,19 @@
 import mysql.connector
-import os # <--- THÊM DÒNG NÀY
+
+
+import mysql.connector
 
 def get_conn():
-    # Sử dụng biến môi trường do Render cung cấp
     return mysql.connector.connect(
-        host=os.getenv("dpg-d4opu98gjchc73cquadg-a"), 
-        user=os.getenv("news_db_vb16_user"), 
-        password=os.getenv("Y5mF3pkJR3n6WDJ552VQMZOxV9O5mnav"), 
-        database=os.getenv("news_db_vb16")
+        host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
+        port=4000,
+        user="2pn9uU8pApSiGVT.root",
+        password="l82RtcBEB0Gr7aTG",
+        database="news_db",
+        ssl_ca="/var/www/html/storage/certs/ca.pem",
+        ssl_disabled=False
     )
+
 
 def get_or_create_source_id(conn, source_name):
     cur = conn.cursor()
