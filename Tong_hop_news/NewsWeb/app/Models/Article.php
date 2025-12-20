@@ -22,7 +22,7 @@ class Article extends Model
     
     // QUAN HỆ VỚI COMMENT
     public function comments() {
-        // Dùng \App\Models\Comment::class để chỉ đích danh đường dẫn, tránh lỗi tìm không thấy
+        
         return $this->hasMany(\App\Models\Comment::class)->orderBy('id', 'desc');
     }
 }
